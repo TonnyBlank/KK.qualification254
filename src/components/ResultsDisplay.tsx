@@ -20,6 +20,8 @@ interface ResultsDisplayProps {
   selectedLevel: string;
   phone: string;
   clusterWeights: Record<number, number>;
+  selectedClusters?: number[];
+  checkAllClusters?: boolean;
   onCheckAnother: () => void;
 }
 
@@ -29,6 +31,8 @@ export function ResultsDisplay({
   selectedLevel,
   phone,
   clusterWeights,
+  selectedClusters = [],
+  checkAllClusters = false,
   onCheckAnother,
 }: ResultsDisplayProps) {
   const totalPoints = calculateTotalPoints(grades);
