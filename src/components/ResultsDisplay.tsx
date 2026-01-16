@@ -137,7 +137,7 @@ export function ResultsDisplay({
               <p className="font-semibold text-accent-foreground">Warning: Marginally Qualified Courses</p>
               <p className="text-sm text-accent-foreground/80 mt-1">
                 Some courses have cluster weights close to last year's cutoff. Choose a guaranteed alternative as backup.
-                Cutoff points vary each year - these are 2023 reference points.
+                Cutoff points vary each year - these are 2024 reference points.
               </p>
             </div>
           </div>
@@ -355,7 +355,7 @@ function generateReportHTML(
       
       <div class="warning">
         <strong>⚠️ IMPORTANT NOTE:</strong>
-        <p>These results are based on 2023 cutoff points. Actual ${new Date().getFullYear()} cutoff points may vary.</p>
+        <p>These results are based on 2024 cutoff points. Actual ${new Date().getFullYear()} cutoff points may vary.</p>
         <p>Always verify with official KUCCPS portal before making final decisions.</p>
       </div>
       
@@ -369,7 +369,7 @@ function generateReportHTML(
             <th>Course Name</th>
             <th>Course Code</th>
             <th>Institution(s)</th>
-            ${selectedLevel === 'degree' ? '<th>Cutoff (2023)</th><th>Your Score</th>' : '<th>Level</th>'}
+            ${selectedLevel === 'degree' ? '<th>Cutoff (2024)</th><th>Your Score</th>' : '<th>Level</th>'}
             <th>Status</th>
             <th>Remarks</th>
           </tr>

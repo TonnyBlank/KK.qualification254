@@ -9,11 +9,11 @@ interface CourseLevelSelectProps {
 }
 
 const levelConfig = [
-  { id: 'artisan', icon: Wrench },
-  { id: 'certificate', icon: Award },
-  { id: 'diploma', icon: BookOpen },
   { id: 'degree', icon: GraduationCap },
+  { id: 'diploma', icon: BookOpen },
   { id: 'kmtc', icon: Stethoscope },
+  { id: 'certificate', icon: Award },
+  { id: 'artisan', icon: Wrench },
 ];
 
 export function CourseLevelSelect({ selectedLevel, onLevelChange }: CourseLevelSelectProps) {
