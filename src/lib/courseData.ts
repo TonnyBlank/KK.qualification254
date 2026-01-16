@@ -9,6 +9,7 @@ export interface Course {
   clusters: number[];
   subjectRequirements: Record<string, string>;
   level?: string;
+  category?: string;
 }
 
 export const allSubjects = {
@@ -58,6 +59,7 @@ export const gradePoints: Record<string, number> = {
 };
 
 export const levelPrices: Record<string, number> = {
+  'artisan': 50,
   'certificate': 50,
   'diploma': 50,
   'degree': 50,
@@ -65,18 +67,77 @@ export const levelPrices: Record<string, number> = {
 };
 
 export const levelNames: Record<string, string> = {
-  'certificate': 'Certificate Courses',
-  'diploma': 'Diploma Courses',
-  'degree': 'Degree Courses',
+  'artisan': 'Artisan/Level 4',
+  'certificate': 'Certificate/Level 5',
+  'diploma': 'Diploma/Level 6',
+  'degree': 'Degree Programmes',
   'kmtc': 'KMTC Medical Courses'
 };
 
 export const levelDescriptions: Record<string, string> = {
-  'certificate': 'Entry-level qualifications for various careers',
-  'diploma': 'Technical and professional qualifications',
+  'artisan': 'Level 4 practical skills training',
+  'certificate': 'Level 5 entry-level qualifications',
+  'diploma': 'Level 6 technical & professional qualifications',
   'degree': 'University bachelor\'s degree programs',
   'kmtc': 'Kenya Medical Training College programs'
 };
+
+// Degree Clusters (1-20) - KUCCPS Official
+export const degreeClusters: Record<number, string> = {
+  1: "Law",
+  2: "Business, Hospitality & Related",
+  3: "Social Sciences, Media Studies, Fine Arts, Film, Animation, Graphics & Related",
+  4: "Geosciences & Related",
+  5: "Engineering, Engineering Technology & Related",
+  6: "Architecture, Building Construction & Related",
+  7: "Computing, IT & Related",
+  8: "Agribusiness & Related",
+  9: "General Science, Biological Sciences, Physics, Chemistry & Related",
+  10: "Actuarial Science, Accountancy, Mathematics, Economics, Statistics & Related",
+  11: "Interior Design, Fashion Design, Textiles & Related",
+  12: "Sport Science & Related",
+  13: "Medicine, Health, Veterinary Medicine & Related",
+  14: "History, Archeology & Related",
+  15: "Agriculture, Animal Health, Food Science, Nutrition Dietetics, Environmental Sciences, Natural Resources & Related",
+  16: "Geography & Related",
+  17: "French & German",
+  18: "Music & Related",
+  19: "Education & Related",
+  20: "Religious Studies, Theology, Islamic Studies & Related"
+};
+
+// Diploma Categories (Level 6)
+export const diplomaCategories: string[] = [
+  "Law", "Education & Related", "Business & Related", "Building, Construction & Related",
+  "Engineering, Technology & Related", "Environmental Sciences", "Applied Sciences",
+  "Health Sciences & Related", "Food Science & Related", "Nutrition & Dietetics",
+  "Social Sciences", "Computing, IT & Related", "Clothing, Fashion & Textile",
+  "Agricultural Sciences & Related", "Natural Sciences & Related", "Tax & Custom Administration",
+  "Graphics, Media Studies, Media Production & Related", "Hospitality, Hotel, Tourism, & Related",
+  "Technical Courses", "Animal Health and Related", "Hair Dressing & Beauty Therapy",
+  "Library & Information Science", "Primary Teacher Education", "Music and Related"
+];
+
+// Certificate Categories (Level 5)
+export const certificateCategories: string[] = [
+  "Business & Related", "Building, Construction & Related", "Engineering Technology & Related",
+  "Health Sciences & Related", "Food Science & Related", "Nutrition & Dietetics",
+  "Social Sciences", "Environmental Sciences", "Applied Sciences", "IT & Related",
+  "Hospitality, Hotel, Tourism, & Related", "Clothing, Fashion & Textile",
+  "Agricultural Sciences & Related", "Natural Sciences & Related",
+  "Graphics, Media Studies, Media Production & Related", "Technical Courses",
+  "Tax & Custom Administration", "Hair Dressing & Beauty Therapy",
+  "Library & Information Sciences", "Law", "Education", "Animal Health and Related"
+];
+
+// Artisan Categories (Level 4)
+export const artisanCategories: string[] = [
+  "Business & Related", "Building, Construction & Related", "Engineering & Technology & Related",
+  "Food Science & Related", "Social Sciences", "Applied Sciences", "IT & Related",
+  "Hospitality, Hotel, Tourism, & Related", "Clothing, Fashion & Textile",
+  "Agricultural Sciences & Related", "Natural Sciences & Related", "Technical Courses",
+  "Hair Dressing & Beauty Therapy", "Library & Information Sciences"
+];
 
 // Cluster 1: Law & Legal Studies
 const cluster1Courses: Course[] = [
@@ -253,30 +314,54 @@ const cluster20Courses: Course[] = [
   { name: "Bachelor of Sign Language Interpretation", code: "1229180", universities: ["Maseno University"], previousYearCutoff: 25.800, bestCluster: 20, clusters: [20], subjectRequirements: { english: "C+" } },
 ];
 
-// Certificate Courses
-const certificateCourses: Course[] = [
-  { name: "Certificate in Business Administration", code: "CERT001", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D+" }, level: "Certificate" },
-  { name: "Certificate in Information Technology", code: "CERT002", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D+" }, level: "Certificate" },
-  { name: "Certificate in Accounting", code: "CERT003", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D" }, level: "Certificate" },
-  { name: "Certificate in Sales and Marketing", code: "CERT004", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", kiswahili: "D+" }, level: "Certificate" },
-  { name: "Certificate in Food and Beverage", code: "CERT005", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D" }, level: "Certificate" },
-  { name: "Certificate in Electrical Installation", code: "CERT006", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D", mathematics: "D", physics: "D" }, level: "Certificate" },
-  { name: "Certificate in Plumbing", code: "CERT007", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D" }, level: "Certificate" },
-  { name: "Certificate in Fashion Design", code: "CERT008", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", art: "D" }, level: "Certificate" },
+// Artisan Courses (Level 4)
+const artisanCourses: Course[] = [
+  { name: "Artisan in Masonry", code: "ART001", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Building, Construction & Related" },
+  { name: "Artisan in Plumbing", code: "ART002", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Building, Construction & Related" },
+  { name: "Artisan in Welding and Fabrication", code: "ART003", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Engineering & Technology & Related" },
+  { name: "Artisan in Motor Vehicle Mechanics", code: "ART004", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Engineering & Technology & Related" },
+  { name: "Artisan in Electrical Installation", code: "ART005", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Engineering & Technology & Related" },
+  { name: "Artisan in Carpentry and Joinery", code: "ART006", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Building, Construction & Related" },
+  { name: "Artisan in Tailoring", code: "ART007", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Clothing, Fashion & Textile" },
+  { name: "Artisan in Hairdressing", code: "ART008", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Hair Dressing & Beauty Therapy" },
+  { name: "Artisan in Beauty Therapy", code: "ART009", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Hair Dressing & Beauty Therapy" },
+  { name: "Artisan in Food Processing", code: "ART010", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Food Science & Related" },
+  { name: "Artisan in Painting and Decoration", code: "ART011", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Building, Construction & Related" },
+  { name: "Artisan in Leather Work", code: "ART012", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Clothing, Fashion & Textile" },
+  { name: "Artisan in Refrigeration and Air Conditioning", code: "ART013", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Engineering & Technology & Related" },
+  { name: "Artisan in Agricultural Mechanics", code: "ART014", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "Agricultural Sciences & Related" },
+  { name: "Artisan in ICT Support", code: "ART015", universities: ["Various TVETs"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "E" }, level: "Artisan", category: "IT & Related" },
 ];
 
-// Diploma Courses
+// Certificate Courses (Level 5)
+const certificateCourses: Course[] = [
+  { name: "Certificate in Business Administration", code: "CERT001", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D+" }, level: "Certificate", category: "Business & Related" },
+  { name: "Certificate in Information Technology", code: "CERT002", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D+" }, level: "Certificate", category: "IT & Related" },
+  { name: "Certificate in Accounting", code: "CERT003", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", mathematics: "D" }, level: "Certificate", category: "Business & Related" },
+  { name: "Certificate in Sales and Marketing", code: "CERT004", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", kiswahili: "D+" }, level: "Certificate", category: "Business & Related" },
+  { name: "Certificate in Food and Beverage", code: "CERT005", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D" }, level: "Certificate", category: "Hospitality, Hotel, Tourism, & Related" },
+  { name: "Certificate in Electrical Installation", code: "CERT006", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D", mathematics: "D", physics: "D" }, level: "Certificate", category: "Engineering Technology & Related" },
+  { name: "Certificate in Plumbing", code: "CERT007", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D" }, level: "Certificate", category: "Building, Construction & Related" },
+  { name: "Certificate in Fashion Design", code: "CERT008", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", art: "D" }, level: "Certificate", category: "Clothing, Fashion & Textile" },
+  { name: "Certificate in Health Sciences", code: "CERT009", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D+", biology: "D" }, level: "Certificate", category: "Health Sciences & Related" },
+  { name: "Certificate in Building Technology", code: "CERT010", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "D", mathematics: "D" }, level: "Certificate", category: "Building, Construction & Related" },
+];
+
+// Diploma Courses (Level 6)
 const diplomaCourses: Course[] = [
-  { name: "Diploma in Business Management", code: "DIP001", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C-" }, level: "Diploma" },
-  { name: "Diploma in Information Technology", code: "DIP002", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C" }, level: "Diploma" },
-  { name: "Diploma in Accounting", code: "DIP003", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C-" }, level: "Diploma" },
-  { name: "Diploma in Human Resource Management", code: "DIP004", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma" },
-  { name: "Diploma in Supply Chain Management", code: "DIP005", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "D+" }, level: "Diploma" },
-  { name: "Diploma in Hospitality Management", code: "DIP006", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma" },
-  { name: "Diploma in Civil Engineering", code: "DIP007", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C", physics: "C-" }, level: "Diploma" },
-  { name: "Diploma in Electrical Engineering", code: "DIP008", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C", physics: "C-" }, level: "Diploma" },
-  { name: "Diploma in Social Work", code: "DIP009", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma" },
-  { name: "Diploma in Journalism", code: "DIP010", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C", kiswahili: "C-" }, level: "Diploma" },
+  { name: "Diploma in Business Management", code: "DIP001", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C-" }, level: "Diploma", category: "Business & Related" },
+  { name: "Diploma in Information Technology", code: "DIP002", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C" }, level: "Diploma", category: "Computing, IT & Related" },
+  { name: "Diploma in Accounting", code: "DIP003", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C-" }, level: "Diploma", category: "Business & Related" },
+  { name: "Diploma in Human Resource Management", code: "DIP004", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma", category: "Business & Related" },
+  { name: "Diploma in Supply Chain Management", code: "DIP005", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "D+" }, level: "Diploma", category: "Business & Related" },
+  { name: "Diploma in Hospitality Management", code: "DIP006", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma", category: "Hospitality, Hotel, Tourism, & Related" },
+  { name: "Diploma in Civil Engineering", code: "DIP007", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C", physics: "C-" }, level: "Diploma", category: "Engineering, Technology & Related" },
+  { name: "Diploma in Electrical Engineering", code: "DIP008", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", mathematics: "C", physics: "C-" }, level: "Diploma", category: "Engineering, Technology & Related" },
+  { name: "Diploma in Social Work", code: "DIP009", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma", category: "Social Sciences" },
+  { name: "Diploma in Journalism", code: "DIP010", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C", kiswahili: "C-" }, level: "Diploma", category: "Graphics, Media Studies, Media Production & Related" },
+  { name: "Diploma in Education", code: "DIP011", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-" }, level: "Diploma", category: "Education & Related" },
+  { name: "Diploma in Nursing", code: "DIP012", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C-", biology: "C-" }, level: "Diploma", category: "Health Sciences & Related" },
+  { name: "Diploma in Law", code: "DIP013", universities: ["Various Polytechnics"], previousYearCutoff: 0, bestCluster: 0, clusters: [], subjectRequirements: { english: "C" }, level: "Diploma", category: "Law" },
 ];
 
 // KMTC Courses
@@ -325,6 +410,8 @@ export function getCoursesByLevel(level: string, selectedClusters?: number[]): C
       }
       // Return all degree courses if no clusters selected (check all)
       return Object.values(allDegreeCourses).flat();
+    case 'artisan':
+      return artisanCourses;
     case 'certificate':
       return certificateCourses;
     case 'diploma':
