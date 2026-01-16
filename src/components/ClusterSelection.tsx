@@ -1,31 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, Layers, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-
-// Cluster categories with their names
-export const clusterCategories: Record<number, string> = {
-  1: "Law & Legal Studies",
-  2: "Business & Commerce",
-  3: "Education Arts",
-  4: "Education Sciences",
-  5: "Medicine & Health Sciences",
-  6: "Engineering",
-  7: "Architecture & Building",
-  8: "Environmental Sciences",
-  9: "Agriculture & Forestry",
-  10: "Computer Science & IT",
-  11: "Physical Sciences",
-  12: "Biological Sciences",
-  13: "Social Sciences",
-  14: "Communication & Media",
-  15: "Fine Arts & Design",
-  16: "Music & Performing Arts",
-  17: "Hospitality & Tourism",
-  18: "Security & Criminology",
-  19: "Sports & Recreation",
-  20: "Special Needs Education",
-};
+import { degreeClusters } from "@/lib/courseData";
 
 interface ClusterSelectionProps {
   selectedClusters: number[];
@@ -81,8 +57,8 @@ export function ClusterSelection({
         </motion.button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        {Object.entries(clusterCategories).map(([clusterId, name], index) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {Object.entries(degreeClusters).map(([clusterId, name], index) => {
           const id = parseInt(clusterId);
           const isSelected = checkAll || selectedClusters.includes(id);
 

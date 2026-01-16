@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Award, BookOpen, Stethoscope, Check } from "lucide-react";
+import { GraduationCap, Award, BookOpen, Stethoscope, Check, Wrench } from "lucide-react";
 import { levelNames, levelDescriptions, levelPrices } from "@/lib/courseData";
 import { cn } from "@/lib/utils";
 
@@ -9,10 +9,11 @@ interface CourseLevelSelectProps {
 }
 
 const levelConfig = [
-  { id: 'certificate', icon: Award, color: 'kenya-green' },
-  { id: 'diploma', icon: BookOpen, color: 'kenya-gold' },
-  { id: 'degree', icon: GraduationCap, color: 'kenya-green' },
-  { id: 'kmtc', icon: Stethoscope, color: 'kenya-red' },
+  { id: 'artisan', icon: Wrench },
+  { id: 'certificate', icon: Award },
+  { id: 'diploma', icon: BookOpen },
+  { id: 'degree', icon: GraduationCap },
+  { id: 'kmtc', icon: Stethoscope },
 ];
 
 export function CourseLevelSelect({ selectedLevel, onLevelChange }: CourseLevelSelectProps) {
