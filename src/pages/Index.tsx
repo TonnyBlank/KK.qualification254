@@ -17,7 +17,7 @@ const Index = () => {
   const [checkAllClusters, setCheckAllClusters] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<QualificationResult[]>([]);
-  const [phone, setPhone] = useState("712345678");
+  const [phone, setPhone] = useState("793900080");
 
   const handleGradeChange = (subject: string, grade: string) => {
     setGrades((prev) => ({ ...prev, [subject]: grade }));
