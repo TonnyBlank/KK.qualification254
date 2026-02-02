@@ -3,7 +3,8 @@ import { Header } from "@/components/Header";
 import { GradeInput } from "@/components/GradeInput";
 import { CourseLevelSelect } from "@/components/CourseLevelSelect";
 import { ClusterWeights } from "@/components/ClusterWeights";
-import { ClusterSelection } from "@/components/ClusterSelection";
+import { CategorySelection } from "@/components/CategorySelection";
+import { MeanGradeInput } from "@/components/MeanGradeInput";
 import { PaymentSection } from "@/components/PaymentSection";
 import { ResultsDisplay } from "@/components/ResultsDisplay";
 import { getCoursesByLevel, checkQualification, QualificationResult } from "@/lib/courseData";
@@ -11,10 +12,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Index = () => {
   const [grades, setGrades] = useState<Record<string, string>>({});
+  const [meanGrade, setMeanGrade] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [clusterWeights, setClusterWeights] = useState<Record<number, number>>({});
   const [selectedClusters, setSelectedClusters] = useState<number[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [checkAllClusters, setCheckAllClusters] = useState(false);
+  const [checkAllCategories, setCheckAllCategories] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<QualificationResult[]>([]);
   const [phone, setPhone] = useState("793900080");
@@ -25,46 +29,84 @@ const Index = () => {
 
   const handleLevelChange = (level: string) => {
     setSelectedLevel(level);
-    // Reset cluster selection when level changes
-    if (level !== "degree") {
-      setSelectedClusters([]);
-      setCheckAllClusters(false);
-    }
+    // Reset selections when level changes
+    setSelectedClusters([]);
+    setSelectedCategories([]);
+    setCheckAllClusters(false);
+    setCheckAllCategories(false);
   };
 
   const handleWeightChange = (cluster: number, weight: number) => {
     setClusterWeights((prev) => ({ ...prev, [cluster]: weight }));
   };
 
-  const handleClusterToggle = (cluster: number) => {
-    setSelectedClusters((prev) =>
-      prev.includes(cluster)
-        ? prev.filter((c) => c !== cluster)
-        : [...prev, cluster]
-    );
+  const handleItemToggle = (item: number | string) => {
+    if (selectedLevel === 'degree') {
+      const cluster = item as number;
+      setSelectedClusters((prev) =>
+        prev.includes(cluster)
+          ? prev.filter((c) => c !== cluster)
+          : [...prev, cluster]
+      );
+    } else {
+      const category = item as string;
+      setSelectedCategories((prev) =>
+        prev.includes(category)
+          ? prev.filter((c) => c !== category)
+          : [...prev, category]
+      );
+    }
   };
 
-  const handleSelectAllClusters = () => {
-    setCheckAllClusters(!checkAllClusters);
-    if (!checkAllClusters) {
-      setSelectedClusters([]);
+  const handleSelectAll = () => {
+    if (selectedLevel === 'degree') {
+      setCheckAllClusters(!checkAllClusters);
+      if (!checkAllClusters) {
+        setSelectedClusters([]);
+      }
+    } else {
+      setCheckAllCategories(!checkAllCategories);
+      if (!checkAllCategories) {
+        setSelectedCategories([]);
+      }
     }
   };
 
   const subjectCount = Object.values(grades).filter((g) => g).length;
   const hasRequiredSubjects = Boolean(grades.english && grades.mathematics);
   const hasClusterWeights = Object.values(clusterWeights).some((w) => w > 0);
-  const hasClusterSelection = checkAllClusters || selectedClusters.length > 0;
+  
+  // For degree: needs cluster selection
+  // For diploma/certificate/artisan: needs category selection
+  // For kmtc: no category selection needed
+  const hasCategorySelection = selectedLevel === 'kmtc' 
+    ? true 
+    : selectedLevel === 'degree'
+    ? (checkAllClusters || selectedClusters.length > 0)
+    : (checkAllCategories || selectedCategories.length > 0);
+
+  // Mean grade is required for non-degree levels
+  const hasMeanGrade = selectedLevel === 'degree' || Boolean(meanGrade);
+
+  // Show category selection for degree, diploma, certificate, artisan (not kmtc)
+  const showCategorySelection = ['degree', 'diploma', 'certificate', 'artisan'].includes(selectedLevel);
+
+  // Show mean grade input for non-degree levels
+  const showMeanGradeInput = ['diploma', 'certificate', 'artisan', 'kmtc'].includes(selectedLevel);
 
   const handlePaymentSuccess = () => {
-    // For degree, use selected clusters; for others, pass undefined
+    // Get courses based on level and selected clusters/categories
     const clustersToCheck = selectedLevel === "degree" 
       ? (checkAllClusters ? undefined : selectedClusters)
       : undefined;
     
-    const courses = getCoursesByLevel(selectedLevel, clustersToCheck);
+    const categoriesToCheck = ['diploma', 'certificate', 'artisan'].includes(selectedLevel)
+      ? (checkAllCategories ? undefined : selectedCategories)
+      : undefined;
+    
+    const courses = getCoursesByLevel(selectedLevel, clustersToCheck, categoriesToCheck);
     const qualificationResults = courses.map((course) =>
-      checkQualification(course, grades, clusterWeights, selectedLevel)
+      checkQualification(course, grades, clusterWeights, selectedLevel, meanGrade)
     );
     
     // Sort: qualified first, then marginal, then not qualified
@@ -84,7 +126,9 @@ const Index = () => {
     setShowResults(false);
     setSelectedLevel("");
     setSelectedClusters([]);
+    setSelectedCategories([]);
     setCheckAllClusters(false);
+    setCheckAllCategories(false);
   };
 
   return (
@@ -108,18 +152,25 @@ const Index = () => {
                 onLevelChange={handleLevelChange}
               />
 
-              <ClusterSelection
-                selectedClusters={selectedClusters}
-                onClusterToggle={handleClusterToggle}
-                onSelectAll={handleSelectAllClusters}
-                checkAll={checkAllClusters}
-                visible={selectedLevel === "degree"}
+              <MeanGradeInput
+                meanGrade={meanGrade}
+                onMeanGradeChange={setMeanGrade}
+                visible={showMeanGradeInput}
+              />
+
+              <CategorySelection
+                selectedItems={selectedLevel === 'degree' ? selectedClusters : selectedCategories}
+                onItemToggle={handleItemToggle}
+                onSelectAll={handleSelectAll}
+                checkAll={selectedLevel === 'degree' ? checkAllClusters : checkAllCategories}
+                visible={showCategorySelection}
+                level={selectedLevel}
               />
 
               <ClusterWeights
                 weights={clusterWeights}
                 onWeightChange={handleWeightChange}
-                visible={selectedLevel === "degree" && hasClusterSelection}
+                visible={selectedLevel === "degree" && hasCategorySelection}
               />
 
               <PaymentSection
@@ -127,7 +178,8 @@ const Index = () => {
                 subjectCount={subjectCount}
                 hasRequiredSubjects={hasRequiredSubjects}
                 hasClusterWeights={hasClusterWeights}
-                hasClusterSelection={hasClusterSelection}
+                hasCategorySelection={hasCategorySelection}
+                hasMeanGrade={hasMeanGrade}
                 onPaymentSuccess={handlePaymentSuccess}
               />
             </motion.div>
@@ -143,6 +195,7 @@ const Index = () => {
                 grades={grades}
                 selectedLevel={selectedLevel}
                 phone={phone}
+                meanGrade={meanGrade}
                 clusterWeights={clusterWeights}
                 selectedClusters={checkAllClusters ? [] : selectedClusters}
                 checkAllClusters={checkAllClusters}

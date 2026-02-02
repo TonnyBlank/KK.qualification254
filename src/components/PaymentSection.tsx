@@ -10,7 +10,8 @@ interface PaymentSectionProps {
   subjectCount: number;
   hasRequiredSubjects: boolean;
   hasClusterWeights: boolean;
-  hasClusterSelection?: boolean;
+  hasCategorySelection?: boolean;
+  hasMeanGrade?: boolean;
   onPaymentSuccess: () => void;
 }
 
@@ -19,7 +20,8 @@ export function PaymentSection({
   subjectCount,
   hasRequiredSubjects,
   hasClusterWeights,
-  hasClusterSelection = true,
+  hasCategorySelection = true,
+  hasMeanGrade = true,
   onPaymentSuccess,
 }: PaymentSectionProps) {
   const [phone, setPhone] = useState("");
@@ -41,7 +43,8 @@ export function PaymentSection({
     if (!selectedLevel) return false;
     if (phone.length !== 9) return false;
     if (!hasRequiredSubjects) return false;
-    if (selectedLevel === 'degree' && !hasClusterSelection) return false;
+    if (!hasCategorySelection) return false;
+    if (!hasMeanGrade && selectedLevel !== 'degree') return false;
     if (selectedLevel === 'degree' && !hasClusterWeights) return false;
     return true;
   };
@@ -50,7 +53,11 @@ export function PaymentSection({
     if (subjectCount < 7) return `Enter at least 7 subjects (${subjectCount}/7)`;
     if (!selectedLevel) return "Select a course level";
     if (!hasRequiredSubjects) return "English and Mathematics are required";
-    if (selectedLevel === 'degree' && !hasClusterSelection) return "Select clusters to check or 'Check All'";
+    if (!hasMeanGrade && selectedLevel !== 'degree') return "Enter your KCSE mean grade";
+    if (!hasCategorySelection) {
+      if (selectedLevel === 'degree') return "Select clusters to check or 'Check All'";
+      return "Select categories to check or 'Check All'";
+    }
     if (selectedLevel === 'degree' && !hasClusterWeights) return "Enter cluster weights for degree courses";
     if (phone.length !== 9) return "Enter valid phone number";
     return null;
