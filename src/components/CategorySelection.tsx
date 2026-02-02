@@ -1,24 +1,70 @@
 import { motion } from "framer-motion";
 import { Check, Layers, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { degreeClusters } from "@/lib/courseData";
+import { 
+  degreeClusters, 
+  diplomaCategories, 
+  certificateCategories, 
+  artisanCategories 
+} from "@/lib/courseData";
 
-interface ClusterSelectionProps {
-  selectedClusters: number[];
-  onClusterToggle: (cluster: number) => void;
+interface CategorySelectionProps {
+  selectedItems: (number | string)[];
+  onItemToggle: (item: number | string) => void;
   onSelectAll: () => void;
   checkAll: boolean;
   visible: boolean;
+  level: string;
 }
 
-export function ClusterSelection({ 
-  selectedClusters, 
-  onClusterToggle, 
+export function CategorySelection({ 
+  selectedItems, 
+  onItemToggle, 
   onSelectAll,
   checkAll,
-  visible 
-}: ClusterSelectionProps) {
+  visible,
+  level
+}: CategorySelectionProps) {
   if (!visible) return null;
+
+  // Get the appropriate items based on level
+  const getItemsForLevel = () => {
+    switch (level) {
+      case 'degree':
+        return Object.entries(degreeClusters).map(([id, name]) => ({
+          id: parseInt(id),
+          name,
+          isCluster: true
+        }));
+      case 'diploma':
+        return diplomaCategories.map((name, index) => ({
+          id: name,
+          name,
+          isCluster: false
+        }));
+      case 'certificate':
+        return certificateCategories.map((name, index) => ({
+          id: name,
+          name,
+          isCluster: false
+        }));
+      case 'artisan':
+        return artisanCategories.map((name, index) => ({
+          id: name,
+          name,
+          isCluster: false
+        }));
+      default:
+        return [];
+    }
+  };
+
+  const items = getItemsForLevel();
+  const isDegree = level === 'degree';
+  const title = isDegree ? "Select Clusters to Check" : "Select Categories to Check";
+  const subtitle = isDegree 
+    ? "Choose specific clusters for degree courses or check all"
+    : `Choose specific categories for ${level} courses or check all`;
 
   return (
     <motion.div
@@ -33,10 +79,10 @@ export function ClusterSelection({
           <Layers className="w-5 h-5 text-primary mt-0.5" />
           <div>
             <h2 className="text-xl font-display font-semibold text-primary">
-              Select Clusters to Check
+              {title}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Choose specific clusters for degree courses or check all
+              {subtitle}
             </p>
           </div>
         </div>
@@ -57,18 +103,20 @@ export function ClusterSelection({
         </motion.button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {Object.entries(degreeClusters).map(([clusterId, name], index) => {
-          const id = parseInt(clusterId);
-          const isSelected = checkAll || selectedClusters.includes(id);
+      <div className={cn(
+        "grid gap-3",
+        isDegree ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      )}>
+        {items.map((item, index) => {
+          const isSelected = checkAll || selectedItems.includes(item.id);
 
           return (
             <motion.button
-              key={id}
+              key={`${item.id}-${index}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.02 * index }}
-              onClick={() => !checkAll && onClusterToggle(id)}
+              onClick={() => !checkAll && onItemToggle(item.id)}
               disabled={checkAll}
               className={cn(
                 "relative p-3 rounded-xl border-2 transition-all text-left group",
@@ -79,21 +127,24 @@ export function ClusterSelection({
               )}
             >
               <div className="flex items-center gap-3">
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors",
-                  isSelected 
-                    ? "bg-primary text-primary-foreground" 
-                    : "bg-muted text-muted-foreground"
-                )}>
-                  {id}
-                </div>
+                {isDegree && (
+                  <div className={cn(
+                    "w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors flex-shrink-0",
+                    isSelected 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted text-muted-foreground"
+                  )}>
+                    {item.id}
+                  </div>
+                )}
                 
                 <div className="flex-1 min-w-0">
                   <p className={cn(
-                    "text-sm font-medium truncate",
+                    "text-sm font-medium",
+                    isDegree ? "truncate" : "line-clamp-2",
                     isSelected ? "text-primary" : "text-foreground"
                   )}>
-                    {name}
+                    {item.name}
                   </p>
                 </div>
 
@@ -112,14 +163,14 @@ export function ClusterSelection({
         })}
       </div>
 
-      {!checkAll && selectedClusters.length > 0 && (
+      {!checkAll && selectedItems.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="mt-4 p-3 bg-muted/50 rounded-xl"
         >
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{selectedClusters.length}</span> cluster(s) selected
+            <span className="font-medium text-foreground">{selectedItems.length}</span> {isDegree ? "cluster(s)" : "category(ies)"} selected
           </p>
         </motion.div>
       )}

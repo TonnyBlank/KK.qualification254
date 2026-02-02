@@ -8,7 +8,8 @@ import {
   User,
   GraduationCap,
   Award,
-  Building
+  Building,
+  Tag
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QualificationResult, levelNames, calculateTotalPoints, subjectLabels } from "@/lib/courseData";
@@ -19,6 +20,7 @@ interface ResultsDisplayProps {
   grades: Record<string, string>;
   selectedLevel: string;
   phone: string;
+  meanGrade?: string;
   clusterWeights: Record<number, number>;
   selectedClusters?: number[];
   checkAllClusters?: boolean;
@@ -30,6 +32,7 @@ export function ResultsDisplay({
   grades,
   selectedLevel,
   phone,
+  meanGrade,
   clusterWeights,
   selectedClusters = [],
   checkAllClusters = false,
@@ -55,7 +58,7 @@ export function ResultsDisplay({
   };
 
   const handleDownload = () => {
-    const htmlContent = generateReportHTML(results, grades, selectedLevel, phone, totalPoints, enteredSubjects, getBestClusterDisplay());
+    const htmlContent = generateReportHTML(results, grades, selectedLevel, phone, totalPoints, enteredSubjects, getBestClusterDisplay(), meanGrade);
     const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -88,8 +91,10 @@ export function ResultsDisplay({
           <InfoCard icon={User} label="Phone" value={`+254 ${phone}`} />
           <InfoCard icon={GraduationCap} label="Level Checked" value={levelNames[selectedLevel]} />
           <InfoCard icon={Award} label="Total Points" value={`${totalPoints}/84`} />
-          {selectedLevel === 'degree' && (
+          {selectedLevel === 'degree' ? (
             <InfoCard icon={Building} label="Best Cluster" value={getBestClusterDisplay()} />
+          ) : (
+            <InfoCard icon={Tag} label="Mean Grade" value={meanGrade || 'N/A'} />
           )}
         </div>
 
@@ -162,7 +167,7 @@ export function ResultsDisplay({
 
         <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
           {results.map((result, index) => (
-            <CourseCard key={index} result={result} index={index} level={selectedLevel} />
+            <CourseCard key={index} result={result} index={index} level={selectedLevel} meanGrade={meanGrade} />
           ))}
         </div>
       </motion.div>
@@ -221,8 +226,9 @@ function StatCard({ icon: Icon, count, label, color, bgColor }: {
   );
 }
 
-function CourseCard({ result, index, level }: { result: QualificationResult; index: number; level: string }) {
+function CourseCard({ result, index, level, meanGrade }: { result: QualificationResult; index: number; level: string; meanGrade?: string }) {
   const { course, qualified, marginallyQualified, missingRequirements, studentWeight } = result;
+  const isDegree = level === 'degree';
 
   return (
     <motion.div
@@ -241,22 +247,45 @@ function CourseCard({ result, index, level }: { result: QualificationResult; ind
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
-          <div>
+          <div className="space-y-1">
             <h3 className="font-semibold text-foreground">{course.name}</h3>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+            
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span>Code: {course.code}</span>
-              {level === 'degree' && (
+              {isDegree ? (
                 <>
                   <span>Cutoff: {course.previousYearCutoff}</span>
                   <span>Your Score: {studentWeight.toFixed(3)}</span>
                 </>
+              ) : (
+                <>
+                  {course.minimumMeanGrade && (
+                    <span>Min Grade: {course.minimumMeanGrade}</span>
+                  )}
+                  {meanGrade && (
+                    <span>Your Grade: {meanGrade}</span>
+                  )}
+                </>
               )}
             </div>
+
+            {/* Category for non-degree courses */}
+            {!isDegree && course.category && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <Tag className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">{course.category}</span>
+              </div>
+            )}
+
+            {/* Institutions */}
             {course.universities.length > 0 && (
-              <p className="text-sm text-primary mt-2">
-                {course.universities.slice(0, 2).join(', ')}
-                {course.universities.length > 2 && ` +${course.universities.length - 2} more`}
-              </p>
+              <div className="flex items-center gap-1.5 mt-2">
+                <Building className="w-3.5 h-3.5 text-primary" />
+                <p className="text-sm text-primary">
+                  {course.universities.slice(0, 2).join(', ')}
+                  {course.universities.length > 2 && ` +${course.universities.length - 2} more`}
+                </p>
+              </div>
             )}
           </div>
         </div>
@@ -296,8 +325,11 @@ function generateReportHTML(
   phone: string,
   totalPoints: number,
   enteredSubjects: string,
-  bestCluster: string
+  bestCluster: string,
+  meanGrade?: string
 ) {
+  const isDegree = selectedLevel === 'degree';
+  
   const tableRows = results.map((result, index) => {
     const { course, qualified, marginallyQualified, missingRequirements, studentWeight } = result;
     const status = marginallyQualified ? 'CLOSE TO CUTOFF' : qualified ? 'QUALIFIED' : 'NOT QUALIFIED';
@@ -309,9 +341,9 @@ function generateReportHTML(
         <td>${course.name}</td>
         <td>${course.code}</td>
         <td>${course.universities.join(', ')}</td>
-        ${selectedLevel === 'degree' ? 
+        ${isDegree ? 
           `<td>${course.previousYearCutoff}</td><td>${studentWeight.toFixed(3)}</td>` : 
-          `<td>${course.level || levelNames[selectedLevel]}</td>`
+          `<td>${course.category || '-'}</td><td>${course.minimumMeanGrade || '-'}</td>`
         }
         <td>${status}</td>
         <td>${missingRequirements.join('; ') || '-'}</td>
@@ -350,7 +382,10 @@ function generateReportHTML(
         <p><strong>Course Level Checked:</strong> ${levelNames[selectedLevel]}</p>
         <p><strong>Subjects Entered:</strong> ${enteredSubjects}</p>
         <p><strong>Total Points:</strong> ${totalPoints}</p>
-        <p><strong>Best Cluster Weight:</strong> ${bestCluster}</p>
+        ${isDegree 
+          ? `<p><strong>Best Cluster Weight:</strong> ${bestCluster}</p>`
+          : `<p><strong>Mean Grade:</strong> ${meanGrade || 'N/A'}</p>`
+        }
       </div>
       
       <div class="warning">
@@ -369,7 +404,10 @@ function generateReportHTML(
             <th>Course Name</th>
             <th>Course Code</th>
             <th>Institution(s)</th>
-            ${selectedLevel === 'degree' ? '<th>Cutoff (2024)</th><th>Your Score</th>' : '<th>Level</th>'}
+            ${isDegree 
+              ? '<th>Cutoff (2024)</th><th>Your Score</th>' 
+              : '<th>Category</th><th>Min Grade</th>'
+            }
             <th>Status</th>
             <th>Remarks</th>
           </tr>
