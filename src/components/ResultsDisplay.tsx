@@ -87,14 +87,13 @@ export function ResultsDisplay({
           Your Results Summary
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${selectedLevel === 'degree' ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-4 mb-6`}>
           <InfoCard icon={User} label="Phone" value={`+254 ${phone}`} />
           <InfoCard icon={GraduationCap} label="Level Checked" value={levelNames[selectedLevel]} />
           <InfoCard icon={Award} label="Total Points" value={`${totalPoints}/84`} />
-          {selectedLevel === 'degree' ? (
+          <InfoCard icon={Tag} label="Mean Grade" value={meanGrade || 'N/A'} />
+          {selectedLevel === 'degree' && (
             <InfoCard icon={Building} label="Best Cluster" value={getBestClusterDisplay()} />
-          ) : (
-            <InfoCard icon={Tag} label="Mean Grade" value={meanGrade || 'N/A'} />
           )}
         </div>
 
@@ -252,19 +251,16 @@ function CourseCard({ result, index, level, meanGrade }: { result: Qualification
             
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span>Code: {course.code}</span>
-              {isDegree ? (
+              {course.minimumMeanGrade && (
+                <span>Min Grade: {course.minimumMeanGrade}</span>
+              )}
+              {meanGrade && (
+                <span>Your Grade: {meanGrade}</span>
+              )}
+              {isDegree && (
                 <>
                   <span>Cutoff: {course.previousYearCutoff}</span>
                   <span>Your Score: {studentWeight.toFixed(3)}</span>
-                </>
-              ) : (
-                <>
-                  {course.minimumMeanGrade && (
-                    <span>Min Grade: {course.minimumMeanGrade}</span>
-                  )}
-                  {meanGrade && (
-                    <span>Your Grade: {meanGrade}</span>
-                  )}
                 </>
               )}
             </div>
