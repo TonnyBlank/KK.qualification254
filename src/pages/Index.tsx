@@ -85,14 +85,14 @@ const Index = () => {
     ? (checkAllClusters || selectedClusters.length > 0)
     : (checkAllCategories || selectedCategories.length > 0);
 
-  // Mean grade is required for non-degree levels
-  const hasMeanGrade = selectedLevel === 'degree' || Boolean(meanGrade);
+  // Mean grade is required for all levels
+  const hasMeanGrade = Boolean(meanGrade);
 
   // Show category selection for degree, diploma, certificate, artisan (not kmtc)
   const showCategorySelection = ['degree', 'diploma', 'certificate', 'artisan'].includes(selectedLevel);
 
-  // Show mean grade input for non-degree levels
-  const showMeanGradeInput = ['diploma', 'certificate', 'artisan', 'kmtc'].includes(selectedLevel);
+  // Show mean grade input for all levels (degrees also require mean grade for qualification)
+  const showMeanGradeInput = ['degree', 'diploma', 'certificate', 'artisan', 'kmtc'].includes(selectedLevel);
 
   const handlePaymentSuccess = () => {
     // Get courses based on level and selected clusters/categories

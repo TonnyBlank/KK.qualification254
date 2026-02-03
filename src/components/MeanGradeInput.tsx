@@ -27,7 +27,7 @@ export function MeanGradeInput({ meanGrade, onMeanGradeChange, visible }: MeanGr
             KCSE Mean Grade
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Enter your overall KCSE mean grade (required for non-degree courses)
+            Enter your overall KCSE mean grade (required for qualification)
           </p>
         </div>
       </div>
