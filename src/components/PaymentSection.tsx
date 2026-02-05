@@ -12,7 +12,7 @@ interface PaymentSectionProps {
   hasClusterWeights: boolean;
   hasCategorySelection?: boolean;
   hasMeanGrade?: boolean;
-  onPaymentSuccess: () => void;
+  onPaymentSuccess: (phone: string) => void;
 }
 
 export function PaymentSection({
@@ -73,7 +73,7 @@ export function PaymentSection({
     await new Promise((resolve) => setTimeout(resolve, 2000));
     
     setIsLoading(false);
-    onPaymentSuccess();
+    onPaymentSuccess(phone);
   };
 
   const validationMessage = getValidationMessage();

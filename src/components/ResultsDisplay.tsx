@@ -19,6 +19,7 @@ interface ResultsDisplayProps {
   results: QualificationResult[];
   grades: Record<string, string>;
   selectedLevel: string;
+  phone: string;
   meanGrade?: string;
   clusterWeights: Record<number, number>;
   selectedClusters?: number[];
@@ -30,6 +31,7 @@ export function ResultsDisplay({
   results,
   grades,
   selectedLevel,
+  phone,
   meanGrade,
   clusterWeights,
   selectedClusters = [],
@@ -56,7 +58,7 @@ export function ResultsDisplay({
   };
 
   const handleDownload = () => {
-    const htmlContent = generateReportHTML(results, grades, selectedLevel, totalPoints, enteredSubjects, getBestClusterDisplay(), meanGrade);
+    const htmlContent = generateReportHTML(results, grades, selectedLevel, phone, totalPoints, enteredSubjects, getBestClusterDisplay(), meanGrade);
     const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -85,7 +87,8 @@ export function ResultsDisplay({
           Your Results Summary
         </h2>
 
-        <div className={`grid grid-cols-1 md:grid-cols-2 ${selectedLevel === 'degree' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 mb-6`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${selectedLevel === 'degree' ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-4 mb-6`}>
+          <InfoCard icon={User} label="Phone" value={`+254 ${phone}`} />
           <InfoCard icon={GraduationCap} label="Level Checked" value={levelNames[selectedLevel]} />
           <InfoCard icon={Award} label="Total Points" value={`${totalPoints}/84`} />
           <InfoCard icon={Tag} label="Mean Grade" value={meanGrade || 'N/A'} />
@@ -315,6 +318,7 @@ function generateReportHTML(
   results: QualificationResult[],
   grades: Record<string, string>,
   selectedLevel: string,
+  phone: string,
   totalPoints: number,
   enteredSubjects: string,
   bestCluster: string,
@@ -370,6 +374,7 @@ function generateReportHTML(
       
       <div class="student-info">
         <h2>Student Information</h2>
+        <p><strong>Phone Number:</strong> +254 ${phone}</p>
         <p><strong>Course Level Checked:</strong> ${levelNames[selectedLevel]}</p>
         <p><strong>Subjects Entered:</strong> ${enteredSubjects}</p>
         <p><strong>Total Points:</strong> ${totalPoints}</p>
