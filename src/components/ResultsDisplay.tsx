@@ -325,8 +325,28 @@ function generateReportHTML(
   meanGrade?: string
 ) {
   const isDegree = selectedLevel === 'degree';
-  
-  const tableRows = results.map((result, index) => {
+
+  // Sort results for the report
+  const sortedResults = [...results].sort((a, b) => {
+    if (isDegree) {
+      // For degree: Qualified → Close to Cutoff → Not Qualified
+      // Qualified (not marginal) comes first
+      if (a.qualified && !a.marginallyQualified && (!b.qualified || b.marginallyQualified)) return -1;
+      if (b.qualified && !b.marginallyQualified && (!a.qualified || a.marginallyQualified)) return 1;
+      // Then marginally qualified (close to cutoff)
+      if (a.marginallyQualified && !b.marginallyQualified) return -1;
+      if (b.marginallyQualified && !a.marginallyQualified) return 1;
+      // Not qualified last
+      return 0;
+    } else {
+      // For other levels: Qualified first, then not qualified
+      if (a.qualified && !b.qualified) return -1;
+      if (!a.qualified && b.qualified) return 1;
+      return 0;
+    }
+  });
+
+  const tableRows = sortedResults.map((result, index) => {
     const { course, qualified, marginallyQualified, missingRequirements, studentWeight } = result;
     const status = marginallyQualified ? 'CLOSE TO CUTOFF' : qualified ? 'QUALIFIED' : 'NOT QUALIFIED';
     const rowClass = marginallyQualified ? 'marginally-qualified' : qualified ? 'qualified' : 'not-qualified';
