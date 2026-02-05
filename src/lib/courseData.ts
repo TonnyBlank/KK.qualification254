@@ -16,7 +16,7 @@ export interface Course {
 export const allSubjects = {
   core: ['english', 'kiswahili', 'mathematics'],
   languages: ['french', 'german', 'arabic'],
-  sciences: ['biology', 'chemistry', 'physics', 'science'],
+  sciences: ['biology', 'chemistry', 'physics'],
   humanities: ['geography', 'history', 'cre', 'ire', 'hre', 'business'],
   technical: ['computer', 'agriculture', 'woodwork', 'metalwork', 'building', 'mechanics', 'drawing', 'aviation', 'electricity', 'homescience', 'art', 'music']
 };
@@ -31,7 +31,6 @@ export const subjectLabels: Record<string, string> = {
   biology: 'Biology',
   chemistry: 'Chemistry',
   physics: 'Physics',
-  science: 'Science',
   geography: 'Geography',
   history: 'History',
   cre: 'CRE',

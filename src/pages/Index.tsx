@@ -5,7 +5,7 @@ import { CourseLevelSelect } from "@/components/CourseLevelSelect";
 import { ClusterWeights } from "@/components/ClusterWeights";
 import { CategorySelection } from "@/components/CategorySelection";
 import { MeanGradeInput } from "@/components/MeanGradeInput";
-import { PaymentSection } from "@/components/PaymentSection";
+import { CheckResultsButton } from "@/components/CheckResultsButton";
 import { ResultsDisplay } from "@/components/ResultsDisplay";
 import { getCoursesByLevel, checkQualification, QualificationResult } from "@/lib/courseData";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +21,6 @@ const Index = () => {
   const [checkAllCategories, setCheckAllCategories] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<QualificationResult[]>([]);
-  const [phone, setPhone] = useState("793900080");
 
   const handleGradeChange = (subject: string, grade: string) => {
     setGrades((prev) => ({ ...prev, [subject]: grade }));
@@ -94,7 +93,7 @@ const Index = () => {
   // Show mean grade input for all levels (degrees also require mean grade for qualification)
   const showMeanGradeInput = ['degree', 'diploma', 'certificate', 'artisan', 'kmtc'].includes(selectedLevel);
 
-  const handlePaymentSuccess = () => {
+  const handleCheckResults = () => {
     // Get courses based on level and selected clusters/categories
     const clustersToCheck = selectedLevel === "degree" 
       ? (checkAllClusters ? undefined : selectedClusters)
@@ -173,14 +172,14 @@ const Index = () => {
                 visible={selectedLevel === "degree" && hasCategorySelection}
               />
 
-              <PaymentSection
+              <CheckResultsButton
                 selectedLevel={selectedLevel}
                 subjectCount={subjectCount}
                 hasRequiredSubjects={hasRequiredSubjects}
                 hasClusterWeights={hasClusterWeights}
                 hasCategorySelection={hasCategorySelection}
                 hasMeanGrade={hasMeanGrade}
-                onPaymentSuccess={handlePaymentSuccess}
+                onCheckResults={handleCheckResults}
               />
             </motion.div>
           ) : (
@@ -194,7 +193,6 @@ const Index = () => {
                 results={results}
                 grades={grades}
                 selectedLevel={selectedLevel}
-                phone={phone}
                 meanGrade={meanGrade}
                 clusterWeights={clusterWeights}
                 selectedClusters={checkAllClusters ? [] : selectedClusters}
