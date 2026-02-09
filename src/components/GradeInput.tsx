@@ -94,3 +94,4 @@ export function GradeInput({ grades: studentGrades, onGradeChange }: GradeInputP
     </motion.div>
   );
 }
+

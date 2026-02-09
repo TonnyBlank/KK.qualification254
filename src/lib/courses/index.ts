@@ -1,4 +1,4 @@
-// Course Data Index - Re-exports all course data and types
+// Course Data Index 
 export * from './types';
 export * from './degreeCourses';
 export * from './diplomaCourses';
